@@ -12,7 +12,7 @@ from model.LPRNet import build_lprnet
 # import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import torch.nn.functional as F
-from torch.utils.data import *
+from torch.utils.data import DataLoader
 from torch import optim
 import torch.nn as nn
 import numpy as np
@@ -28,7 +28,7 @@ def get_parser():
     parser.add_argument('--test_img_dirs', default="./data/test", help='the test images path')
     parser.add_argument('--dropout_rate', default=0, help='dropout rate.')
     parser.add_argument('--lpr_max_len', default=8, help='license plate number max length.')
-    parser.add_argument('--test_batch_size', default=100, help='testing batch size.')
+    parser.add_argument('--test_batch_size', default=100, type=int, help='testing batch size.')
     parser.add_argument('--phase_train', default=False, type=bool, help='train or test phase flag.')
     parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
     parser.add_argument('--cuda', default=True, type=bool, help='Use cuda to train model')
@@ -105,12 +105,16 @@ def Greedy_Decode_Eval(Net, datasets, args):
         prebs = Net(images)
         # greedy decode
         prebs = prebs.cpu().detach().numpy()
+        print(prebs.shape)
         preb_labels = list()
         for i in range(prebs.shape[0]):
             preb = prebs[i, :, :]
             preb_label = list()
             for j in range(preb.shape[1]):
                 preb_label.append(np.argmax(preb[:, j], axis=0))
+                print('')
+                print(preb[:, j])
+                print(np.argmax(preb[:, j], axis=0))
             no_repeat_blank_label = list()
             pre_c = preb_label[0]
             if pre_c != len(CHARS) - 1:

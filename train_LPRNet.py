@@ -11,7 +11,8 @@ from model.LPRNet import build_lprnet
 # import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import torch.nn.functional as F
-from torch.utils.data import *
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset
 from torch import optim
 import torch.nn as nn
 import numpy as np
@@ -48,14 +49,14 @@ def adjust_learning_rate(optimizer, cur_epoch, base_lr, lr_schedule):
 
 def get_parser():
     parser = argparse.ArgumentParser(description='parameters to train net')
-    parser.add_argument('--max_epoch', default=15, help='epoch to train the network')
+    parser.add_argument('--max_epoch', default=15, type=int, help='epoch to train the network')
     parser.add_argument('--img_size', default=[94, 24], help='the image size')
     parser.add_argument('--train_img_dirs', default="~/workspace/trainMixLPR", help='the train images path')
     parser.add_argument('--test_img_dirs', default="~/workspace/testMixLPR", help='the test images path')
     parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
-    parser.add_argument('--learning_rate', default=0.1, help='base value of learning rate.')
+    parser.add_argument('--learning_rate', default=0.1, type=float, help='base value of learning rate.')
     parser.add_argument('--lpr_max_len', default=8, help='license plate number max length.')
-    parser.add_argument('--train_batch_size', default=128, help='training batch size.')
+    parser.add_argument('--train_batch_size', default=128, type=int, help='training batch size.')
     parser.add_argument('--test_batch_size', default=120, help='testing batch size.')
     parser.add_argument('--phase_train', default=True, type=bool, help='train or test phase flag.')
     parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
@@ -65,9 +66,9 @@ def get_parser():
     parser.add_argument('--test_interval', default=2000, type=int, help='interval for evaluate')
     parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
     parser.add_argument('--weight_decay', default=2e-5, type=float, help='Weight decay for SGD')
-    parser.add_argument('--lr_schedule', default=[4, 8, 12, 14, 16], help='schedule for learning rate.')
+    parser.add_argument('--lr_schedule', default='100,200,300', type=lambda s: [int(item) for item in s.split(',')], help='schedule for learning rate.')
     parser.add_argument('--save_folder', default='./weights/', help='Location to save checkpoint models')
-    # parser.add_argument('--pretrained_model', default='./weights/Final_LPRNet_model.pth', help='pretrained base model')
+        # parser.add_argument('--pretrained_model', default='./weights/Final_LPRNet_model.pth', help='pretrained base model')
     parser.add_argument('--pretrained_model', default='', help='pretrained base model')
 
     args = parser.parse_args()
