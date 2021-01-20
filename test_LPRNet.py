@@ -129,6 +129,14 @@ def Greedy_Decode_Eval(Net, datasets, args):
             preb_labels.append(no_repeat_blank_label)
         for i, label in enumerate(preb_labels):
             # show image and its predict label
+            lb = ""
+            for x in label:
+                lb += CHARS[x]
+            tg = ""
+            for j in targets[i].tolist():
+                tg += CHARS[int(j)]
+            print("expected " + tg + ", got " + lb)
+
             if args.show:
                 show(imgs[i], label, targets[i])
             if len(label) != len(targets[i]):
